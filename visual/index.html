@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="60">
+    <title>Мониторинг труб</title>
+</head>
+<body>
+    <h1>Мониторинг газопровода</h1>
+    <table border="1" cellpadding="10" cellspacing="0">
+        <tr>
+            <th>Труба 1</th>
+            <th>Труба 2</th>
+            <th>Труба 3</th>
+            <th>Труба 4</th>
+            <th>Труба 5</th>
+        </tr>
+        <tr>
+            <td id="pipe1">Загрузка...</td>
+            <td id="pipe2">Загрузка...</td>
+            <td id="pipe3">Загрузка...</td>
+            <td id="pipe4">Загрузка...</td>
+            <td id="pipe5">Загрузка...</td>
+        </tr>
+    </table>
+
+    <script>
+        async function loadData() {
+            try {
+                const response = await fetch('/data');
+                const pipes = await response.json();
+
+                pipes.forEach(pipe => {
+                    const cell = document.getElementById('pipe' + pipe.id);
+                    const color = pipe.status === 'danger' ? 'red' : 'green';
+                    cell.innerHTML = `
+                        <b style="color: ${color}">${pipe.status === 'danger' ? 'НЕИСПРАВНОСТЬ' : 'СТАБИЛЬНО'}</b><br>
+                        T: ${pipe.temp} C<br>
+                        P: ${pipe.pressure} бар<br>
+                        F: ${pipe.flow} м3/ч<br>
+                        V: ${pipe.vibration} мм/с
+                    `;
+                });
+            } catch (e) {}
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
